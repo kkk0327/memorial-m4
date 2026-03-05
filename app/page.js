@@ -11,13 +11,13 @@ const SCENE_CONFIG = {
 };
 
 export default function MemorialApp() {
-  const [activeMenu, setActiveMenu] = useState('main'); // main, video, gallery
+  const [activeMenu, setActiveMenu] = useState('main');
   const [currentScene, setCurrentScene] = useState('select');
   const [hasFlowered, setHasFlowered] = useState(false);
   const [isFlowering, setIsFlowering] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState([]);
-  const [showGuestbook, setShowGuestbook] = useState(false); 
+  const [showGuestbook, setShowGuestbook] = useState(false);
   const [isPannellumLoaded, setIsPannellumLoaded] = useState(false);
   
   const viewerRef = useRef(null);
@@ -41,33 +41,19 @@ export default function MemorialApp() {
   };
 
   const handleExit = () => {
-    if (currentScene === 'select') {
-      setActiveMenu('main');
-    } else if (currentScene === 'bong1intro') {
-      setCurrentScene('select');
-    } else if (currentScene === 'yu') {
-      setCurrentScene('select');
-    } else if (currentScene === 'per') {
-      setCurrentScene('yu');
-    } else {
-      setCurrentScene('select');
-    }
+    if (currentScene === 'select') setActiveMenu('main');
+    else if (currentScene === 'bong1intro') setCurrentScene('yu'); // 수정: 영상 X 시 유골함으로
+    else if (currentScene === 'yu') setCurrentScene('select');
+    else if (currentScene === 'per') setCurrentScene('yu');
+    else setCurrentScene('select');
   };
 
   useEffect(() => {
-    if (pannellumInstance.current) {
-      pannellumInstance.current.destroy();
-      pannellumInstance.current = null;
-    }
+    if (pannellumInstance.current) { pannellumInstance.current.destroy(); pannellumInstance.current = null; }
     if (activeMenu === 'gallery' && currentScene === 'per' && isPannellumLoaded && window.pannellum) {
       if (viewerRef.current) {
         pannellumInstance.current = window.pannellum.viewer(viewerRef.current, {
-          type: "equirectangular",
-          panorama: SCENE_CONFIG['per'].img,
-          autoLoad: true,
-          showControls: false,
-          hfov: 120,
-          maxHfov: 120
+          type: "equirectangular", panorama: SCENE_CONFIG['per'].img, autoLoad: true, showControls: false, hfov: 120, maxHfov: 120
         });
       }
     }
@@ -82,18 +68,17 @@ export default function MemorialApp() {
         <div className="guestbook-overlay">
           <div className="guestbook-modal">
             <h2>방명록</h2>
-            <p>따뜻한 위로와 추모의 마음을 남겨주세요.</p>
-            <textarea placeholder="내용을 입력하세요..." rows="5"></textarea>
+            <textarea rows="5"></textarea>
             <button className="submit-btn" onClick={() => setShowGuestbook(false)}>등록하기</button>
-            <button className="modal-close-btn" onClick={() => setShowGuestbook(false)}><X size={28} /></button>
+            <button className="modal-close-btn" onClick={() => setShowGuestbook(false)}><X /></button>
           </div>
         </div>
       )}
 
       {activeMenu === 'main' && (
         <div className="main-viewport">
-          <img src="/images/main.jpg" className="full-bg-mobile" alt="main mobile" />
-          <img src="/images/maindesk.jpg" className="full-bg-desktop" alt="main desktop" />
+          <img src="/images/main.jpg" className="full-bg-mobile" />
+          <img src="/images/maindesk.jpg" className="full-bg-desktop" />
           <div className="main-overlay">
             <div className="text-container">
               <h1 className="main-title">추모관</h1>
@@ -101,18 +86,11 @@ export default function MemorialApp() {
             </div>
             <div className="bottom-menu">
               <button onClick={handleFlower}><Flower2 size={38} color="white" /><span>헌화</span></button>
-              <button onClick={() => setActiveMenu('video')}><Landmark size={38} color="white" /><span>추모관</span></button>
+              <button onClick={() => { setActiveMenu('gallery'); setCurrentScene('select'); }}><Landmark size={38} color="white" /><span>추모관</span></button>
               <button onClick={() => setShowGuestbook(true)}><NotebookPen size={38} color="white" /><span>방명록</span></button>
             </div>
           </div>
-          {isFlowering && <div className="flower-anim"><img src="/images/guk.png" alt="flower" /></div>}
-        </div>
-      )}
-
-      {activeMenu === 'video' && (
-        <div className="video-full-viewport">
-          <video src="/videos/mo03.mp4" autoPlay playsInline onEnded={handleMo03Exit} className="full-video-element" />
-          <button className="exit-button" onClick={handleMo03Exit}><X size={32} color="white" /></button>
+          {isFlowering && <div className="flower-anim"><img src="/images/guk.png" /></div>}
         </div>
       )}
 
@@ -125,12 +103,12 @@ export default function MemorialApp() {
             </div>
           ) : (
             <div className="flat-scene-wrapper">
-              {SCENE_CONFIG[currentScene]?.isPanorama ? <div ref={viewerRef} className="viewer-canvas" /> : <img src={SCENE_CONFIG[currentScene].img} className="flat-scene-img" alt="scene" />}
+              {SCENE_CONFIG[currentScene]?.isPanorama ? <div ref={viewerRef} className="viewer-canvas" /> : <img src={SCENE_CONFIG[currentScene].img} className="flat-scene-img" />}
               {currentScene === 'select' && (
                 <>
-                  <button className="hotspot-btn" style={{left: '34%', top: '37%'}} onClick={() => setCurrentScene('bong1intro')}>봉안당 1</button>
+                  <button className="hotspot-btn" style={{left: '40%', top: '37%'}} onClick={() => setCurrentScene('bong1intro')}>봉안당 1</button>
                   <button className="hotspot-btn" style={{left: '53%', top: '62%'}}>봉안당 2</button>
-                  <button className="hotspot-btn" style={{left: '60%', top: '50%'}}>봉안당 3</button>
+                  <button className="hotspot-btn" style={{left: '60%', top: '46%'}}>봉안당 3</button>
                 </>
               )}
               {currentScene === 'yu' && <div className="min-seong-clickbox" onClick={() => setCurrentScene('per')}></div>}
@@ -140,7 +118,6 @@ export default function MemorialApp() {
           )}
         </div>
       )}
-
       {showToast && <div className="toast-center">{toastMessage.map((line, i) => <div key={i}>{line}</div>)}</div>}
 
       <style jsx global>{`
