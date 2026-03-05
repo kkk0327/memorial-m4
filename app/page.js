@@ -17,7 +17,7 @@ export default function MemorialApp() {
   const [isFlowering, setIsFlowering] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState([]);
-  const [showGuestbook, setShowGuestbook] = useState(false);
+  const [showGuestbook, setShowGuestbook] = useState(false); 
   const [isPannellumLoaded, setIsPannellumLoaded] = useState(false);
   
   const viewerRef = useRef(null);
@@ -41,8 +41,9 @@ export default function MemorialApp() {
   };
 
   const handleExit = () => {
+    // 수정: bong1intro에서 X 누르면 yu(유골함)로 이동
     if (currentScene === 'select') setActiveMenu('main');
-    else if (currentScene === 'bong1intro') setCurrentScene('select');
+    else if (currentScene === 'bong1intro') setCurrentScene('yu'); 
     else if (currentScene === 'yu') setCurrentScene('select');
     else if (currentScene === 'per') setCurrentScene('yu');
     else setCurrentScene('select');
@@ -113,7 +114,7 @@ export default function MemorialApp() {
               )}
               {currentScene === 'yu' && <div className="min-seong-clickbox" onClick={() => setCurrentScene('per')}></div>}
               <button className="exit-button" onClick={handleExit}><X size={32} color="white" /></button>
-              {SCENE_CONFIG[currentScene]?.title && <div className="hotspot-btn" style={{left: '50%', top: '30px', transform: 'translateX(-50%)'}}>{SCENE_CONFIG[currentScene].title}</div>}
+              <div className="hotspot-btn" style={{left: '50%', top: '30px', transform: 'translateX(-50%)'}}>{SCENE_CONFIG[currentScene].title}</div>
             </div>
           )}
         </div>
