@@ -47,7 +47,7 @@ export default function MemorialApp() {
     if (currentScene === 'select') {
       setActiveMenu('main');
     } else if (currentScene === 'bong1intro') {
-      setCurrentScene('yu');
+      setCurrentScene('select'); // 수정: 봉안당1 영상에서 X 누르면 건물 선택으로 이동
     } else if (currentScene === 'yu') {
       setCurrentScene('select');
     } else if (currentScene === 'per') {
@@ -133,7 +133,7 @@ export default function MemorialApp() {
           {currentScene === 'bong1intro' ? (
             <div className="video-full-viewport">
               <video src="/videos/bong1intro.mp4" autoPlay playsInline onEnded={() => setCurrentScene('yu')} className="full-video-element" />
-              <button className="exit-button" onClick={() => setCurrentScene('select')}><X size={32} color="white" /></button>
+              <button className="exit-button" onClick={handleExit}><X size={32} color="white" /></button>
             </div>
           ) : (
             <div className="flat-scene-wrapper">
@@ -144,19 +144,19 @@ export default function MemorialApp() {
                 <img src={SCENE_CONFIG[currentScene].img} className="flat-scene-img" alt="scene" />
               )}
 
-              {/* 건물 선택 핫스팟 (변경된 좌표 적용) */}
+              {/* 건물 선택 핫스팟 (좌표 적용) */}
               {currentScene === 'select' && (
                 <>
-                  <button className="hotspot-btn" style={{left: '35%', top: '59%'}} onClick={() => setCurrentScene('bong1intro')}>봉안당 1</button>
+                  <button className="hotspot-btn" style={{left: '38%', top: '42%'}} onClick={() => setCurrentScene('bong1intro')}>봉안당 1</button>
                   <button className="hotspot-btn" style={{left: '53%', top: '62%'}}>봉안당 2</button>
-                  <button className="hotspot-btn" style={{left: '65%', top: '48%'}}>봉안당 3</button>
+                  <button className="hotspot-btn" style={{left: '56%', top: '45%'}}>봉안당 3</button>
                 </>
               )}
 
               {currentScene === 'yu' && <div className="min-seong-clickbox" onClick={() => setCurrentScene('per')}></div>}
 
               <button className="exit-button" onClick={handleExit}><X size={32} color="white" /></button>
-              {/* 타이틀 글씨체를 hotspot-btn과 통일 */}
+              {/* 수정: 타이틀 박스에 hotspot-btn 스타일 적용 */}
               {SCENE_CONFIG[currentScene]?.title && <div className="hotspot-btn" style={{left: '50%', top: '30px', transform: 'translateX(-50%)'}}>{SCENE_CONFIG[currentScene].title}</div>}
               
             </div>
@@ -205,9 +205,7 @@ export default function MemorialApp() {
         .flat-scene-img { width: 100%; height: 100%; object-fit: contain; }
         .viewer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; background: #000; }
 
-        /* hotspot-btn 스타일을 타이틀에도 적용 */
         .hotspot-btn { position: absolute; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); border: 2px solid #ef4444; color: white; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.2rem; z-index: 120; }
-        
         .exit-button { position: absolute; top: 30px; right: 30px; z-index: 250; background: rgba(0,0,0,0.5); border: 1px solid #fff; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
         .min-seong-clickbox { position: absolute; top: 15%; left: 40%; width: 20%; height: 30%; cursor: pointer; z-index: 115; }
@@ -220,6 +218,7 @@ export default function MemorialApp() {
         .guestbook-modal p { margin: 0; color: #666; font-size: 1rem; }
         .guestbook-modal textarea { width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; resize: none; box-sizing: border-box; font-family: inherit; }
         .submit-btn { background: #3b82f6; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .submit-btn:hover { background: #2563eb; }
         .modal-close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; cursor: pointer; color: #666; }
       `}</style>
     </div>
