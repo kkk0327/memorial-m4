@@ -5,7 +5,7 @@ import Script from 'next/script';
 import { Flower2, Landmark, NotebookPen, X } from 'lucide-react';
 
 const SCENE_CONFIG = {
-  'select': { img: '/images/select.jpg', title: '건물 선택' },
+  'select': { img: '/images/select.jpg', title: '봉안당 선택' },
   'yu': { img: '/images/yu.jpg', title: '유골함' },
   'per': { img: '/images/per.jpg', title: '개인추모실', isPanorama: true }
 };
@@ -66,9 +66,8 @@ export default function MemorialApp() {
 
       {showGuestbook && (
         <div className="guestbook-overlay">
-          <div className="guestbook-modal">
+          <div className="guestbook-modal-dark">
             <h2>방명록</h2>
-            <p>따뜻한 위로와 추모의 마음을 남겨주세요.</p>
             <textarea placeholder="내용을 입력하세요..." rows="5"></textarea>
             <button className="submit-btn" onClick={() => setShowGuestbook(false)}>등록하기</button>
             <button className="modal-close-btn" onClick={() => setShowGuestbook(false)}><X size={28} /></button>
@@ -87,7 +86,7 @@ export default function MemorialApp() {
             </div>
             <div className="bottom-menu">
               <button onClick={handleFlower}><Flower2 size={38} color="white" /><span>헌화</span></button>
-              <button onClick={() => { setActiveMenu('gallery'); setCurrentScene('select'); }}><Landmark size={38} color="white" /><span>추모관</span></button>
+              <button onClick={() => { setActiveMenu('video'); }}><Landmark size={38} color="white" /><span>추모관</span></button>
               <button onClick={() => setShowGuestbook(true)}><NotebookPen size={38} color="white" /><span>방명록</span></button>
             </div>
           </div>
@@ -121,7 +120,7 @@ export default function MemorialApp() {
               )}
               {currentScene === 'yu' && <div className="min-seong-clickbox" onClick={() => setCurrentScene('per')}></div>}
               <button className="exit-button" onClick={handleExit}><X size={32} color="white" /></button>
-              {/* 수정: 건물선택 타이틀 박스 삭제 */}
+              <div className="hotspot-btn" style={{left: '50%', top: '30px', transform: 'translateX(-50%)'}}>{SCENE_CONFIG[currentScene].title}</div>
             </div>
           )}
         </div>
@@ -158,9 +157,9 @@ export default function MemorialApp() {
         .min-seong-clickbox { position:absolute; top:15%; left:40%; width:20%; height:30%; cursor:pointer; z-index:115; }
         .toast-center { position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.85); color:white; padding:22px 45px; border-radius:20px; z-index:500; text-align:center; font-size:1.2rem; line-height:1.5; }
         .guestbook-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:600; display:flex; justify-content:center; align-items:center; }
-        .guestbook-modal { background:white; padding:40px; border-radius:12px; width:500px; display:flex; flex-direction:column; gap:15px; position:relative; }
+        .guestbook-modal-dark { background:rgba(0,0,0,0.8); color:white; padding:40px; border-radius:12px; width:500px; display:flex; flex-direction:column; gap:15px; position:relative; }
         .submit-btn { background:#3b82f6; color:white; border:none; padding:15px; border-radius:8px; font-weight:bold; cursor:pointer; }
-        .modal-close-btn { position:absolute; top:20px; right:20px; background:none; border:none; cursor:pointer; }
+        .modal-close-btn { position:absolute; top:20px; right:20px; background:none; border:none; cursor:pointer; color:white; }
       `}</style>
     </div>
   );
