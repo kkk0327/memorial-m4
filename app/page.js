@@ -11,7 +11,7 @@ const SCENE_CONFIG = {
 };
 
 export default function MemorialApp() {
-  const [activeMenu, setActiveMenu] = useState('main');
+  const [activeMenu, setActiveMenu] = useState('main'); 
   const [currentScene, setCurrentScene] = useState('select');
   const [hasFlowered, setHasFlowered] = useState(false);
   const [isFlowering, setIsFlowering] = useState(false);
@@ -42,7 +42,7 @@ export default function MemorialApp() {
 
   const handleExit = () => {
     if (currentScene === 'select') setActiveMenu('main');
-    else if (currentScene === 'bong1intro') setCurrentScene('yu'); // 수정: 영상 X 시 유골함으로
+    else if (currentScene === 'bong1intro') setCurrentScene('select');
     else if (currentScene === 'yu') setCurrentScene('select');
     else if (currentScene === 'per') setCurrentScene('yu');
     else setCurrentScene('select');
@@ -70,7 +70,7 @@ export default function MemorialApp() {
             <h2>방명록</h2>
             <textarea rows="5"></textarea>
             <button className="submit-btn" onClick={() => setShowGuestbook(false)}>등록하기</button>
-            <button className="modal-close-btn" onClick={() => setShowGuestbook(false)}><X /></button>
+            <button className="modal-close-btn" onClick={() => setShowGuestbook(false)}><X size={28} /></button>
           </div>
         </div>
       )}
@@ -106,7 +106,7 @@ export default function MemorialApp() {
               {SCENE_CONFIG[currentScene]?.isPanorama ? <div ref={viewerRef} className="viewer-canvas" /> : <img src={SCENE_CONFIG[currentScene].img} className="flat-scene-img" />}
               {currentScene === 'select' && (
                 <>
-                  <button className="hotspot-btn" style={{left: '40%', top: '37%'}} onClick={() => setCurrentScene('bong1intro')}>봉안당 1</button>
+                  <button className="hotspot-btn" style={{left: '36%', top: '37%'}} onClick={() => setCurrentScene('bong1intro')}>봉안당 1</button>
                   <button className="hotspot-btn" style={{left: '53%', top: '62%'}}>봉안당 2</button>
                   <button className="hotspot-btn" style={{left: '60%', top: '46%'}}>봉안당 3</button>
                 </>
@@ -121,6 +121,7 @@ export default function MemorialApp() {
       {showToast && <div className="toast-center">{toastMessage.map((line, i) => <div key={i}>{line}</div>)}</div>}
 
       <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap');
         body, html { margin:0; padding:0; width:100%; height:100%; background:#000; overflow:hidden; font-family:'Noto Serif KR', serif; }
         .app-container { width:100vw; height:100vh; display:flex; justify-content:center; align-items:center; }
         .main-viewport { position:relative; width:100%; height:100%; overflow:hidden; }
@@ -144,7 +145,7 @@ export default function MemorialApp() {
         .flat-scene-wrapper { position:absolute; inset:0; width:100vw; height:100vh; }
         .flat-scene-img { width:100%; height:100%; object-fit:contain; }
         .viewer-canvas { position:absolute; inset:0; width:100%; height:100%; background:#000; }
-        .hotspot-btn { position:absolute; transform:translate(-50%, -50%); background:rgba(0,0,0,0.7); border:2px solid #ef4444; color:white; padding:10px 25px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:1.2rem; z-index:120; }
+        .hotspot-btn { position:absolute; transform:translate(-50%, -50%); background:rgba(0,0,0,0.7); border:2px solid #ef4444; color:white; padding:10px 25px; border-radius:8px; cursor:pointer; font-weight:700; font-family:'Noto Serif KR', serif; font-size:1.2rem; z-index:120; }
         .exit-button { position:absolute; top:30px; right:30px; z-index:250; background:rgba(0,0,0,0.5); border:1px solid #fff; border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
         .min-seong-clickbox { position:absolute; top:15%; left:40%; width:20%; height:30%; cursor:pointer; z-index:115; }
         .toast-center { position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.85); color:white; padding:22px 45px; border-radius:20px; z-index:500; text-align:center; font-size:1.2rem; line-height:1.5; }
