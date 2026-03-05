@@ -158,7 +158,8 @@ export default function MemorialApp() {
         .toast-center { position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.85); color:white; padding:22px 45px; border-radius:20px; z-index:500; text-align:center; font-size:1.2rem; line-height:1.5; }
         .guestbook-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:600; display:flex; justify-content:center; align-items:center; }
         .guestbook-modal-dark { background:rgba(0,0,0,0.8); color:white; padding:40px; border-radius:12px; width:500px; display:flex; flex-direction:column; gap:15px; position:relative; }
-        .submit-btn { background:#3b82f6; color:white; border:none; padding:15px; border-radius:8px; font-weight:bold; cursor:pointer; }
+        .guestbook-modal-dark textarea { background:rgba(30, 30, 30, 0.9); color:#ccc; border:1px solid #444; padding:10px; border-radius:8px; resize:none; }
+        .guestbook-modal-dark .submit-btn { background:#3b82f6; color:white; border:none; padding:15px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:1.2em; }
         .modal-close-btn { position:absolute; top:20px; right:20px; background:none; border:none; cursor:pointer; color:white; }
       `}</style>
     </div>
