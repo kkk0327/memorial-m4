@@ -41,9 +41,8 @@ export default function MemorialApp() {
   };
 
   const handleExit = () => {
-    // 수정: bong1intro에서 X 누르면 yu(유골함)로 이동
     if (currentScene === 'select') setActiveMenu('main');
-    else if (currentScene === 'bong1intro') setCurrentScene('yu'); 
+    else if (currentScene === 'bong1intro') setCurrentScene('yu');
     else if (currentScene === 'yu') setCurrentScene('select');
     else if (currentScene === 'per') setCurrentScene('yu');
     else setCurrentScene('select');
@@ -69,7 +68,8 @@ export default function MemorialApp() {
         <div className="guestbook-overlay">
           <div className="guestbook-modal">
             <h2>방명록</h2>
-            <textarea rows="5"></textarea>
+            <p>따뜻한 위로와 추모의 마음을 남겨주세요.</p>
+            <textarea placeholder="내용을 입력하세요..." rows="5"></textarea>
             <button className="submit-btn" onClick={() => setShowGuestbook(false)}>등록하기</button>
             <button className="modal-close-btn" onClick={() => setShowGuestbook(false)}><X size={28} /></button>
           </div>
@@ -87,11 +87,18 @@ export default function MemorialApp() {
             </div>
             <div className="bottom-menu">
               <button onClick={handleFlower}><Flower2 size={38} color="white" /><span>헌화</span></button>
-              <button onClick={() => { setActiveMenu('gallery'); setCurrentScene('select'); }}><Landmark size={38} color="white" /><span>추모관</span></button>
+              <button onClick={() => setActiveMenu('video')}><Landmark size={38} color="white" /><span>추모관</span></button>
               <button onClick={() => setShowGuestbook(true)}><NotebookPen size={38} color="white" /><span>방명록</span></button>
             </div>
           </div>
           {isFlowering && <div className="flower-anim"><img src="/images/guk.png" /></div>}
+        </div>
+      )}
+
+      {activeMenu === 'video' && (
+        <div className="video-full-viewport">
+          <video src="/videos/mo03.mp4" autoPlay playsInline onEnded={handleMo03Exit} className="full-video-element" />
+          <button className="exit-button" onClick={handleMo03Exit}><X size={32} color="white" /></button>
         </div>
       )}
 
