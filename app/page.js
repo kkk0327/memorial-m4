@@ -17,12 +17,13 @@ export default function MemorialApp() {
   const [isFlowering, setIsFlowering] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState([]);
+  const [showGuestbook, setShowGuestbook] = useState(false); // 방명록 상태 추가
   const [isPannellumLoaded, setIsPannellumLoaded] = useState(false);
   
   const viewerRef = useRef(null);
   const pannellumInstance = useRef(null);
 
-  // 헌화하기 완벽 복구
+  // 헌화하기
   const handleFlower = () => {
     if (hasFlowered) {
       setToastMessage(["이미 헌화하셨습니다.", "따뜻한 마음 감사합니다."]);
@@ -44,19 +45,19 @@ export default function MemorialApp() {
   // 각 씬의 X 버튼 로직
   const handleExit = () => {
     if (currentScene === 'select') {
-      setActiveMenu('main'); // 건물 선택 -> 메인화면
+      setActiveMenu('main');
     } else if (currentScene === 'bong1intro') {
-      setCurrentScene('yu'); // 봉안당1 영상 중 X -> 유골함
+      setCurrentScene('yu');
     } else if (currentScene === 'yu') {
-      setCurrentScene('select'); // 유골함에서 X -> 건물 선택
+      setCurrentScene('select');
     } else if (currentScene === 'per') {
-      setCurrentScene('yu'); // 개인추모실에서 X -> 유골함
+      setCurrentScene('yu');
     } else {
       setCurrentScene('select');
     }
   };
 
-  // 개인추모실(per) 파노라마 뷰어 복구
+  // 개인추모실 파노라마 뷰어 (최대 축소 상태로 시작)
   useEffect(() => {
     if (pannellumInstance.current) {
       pannellumInstance.current.destroy();
@@ -69,7 +70,8 @@ export default function MemorialApp() {
           panorama: SCENE_CONFIG['per'].img,
           autoLoad: true,
           showControls: false,
-          hfov: 100
+          hfov: 120, // 시야각을 넓혀 최대 축소 상태로 시작
+          maxHfov: 120
         });
       }
     }
@@ -77,11 +79,23 @@ export default function MemorialApp() {
 
   return (
     <div className="app-container">
-      {/* 파노라마용 스크립트 복구 */}
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
       <Script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js" strategy="afterInteractive" onLoad={() => setIsPannellumLoaded(true)} />
 
-      {/* 1. 메인화면 (중앙 검정 글씨, 우측 정렬 1.5배 메뉴) */}
+      {/* 방명록 모달창 */}
+      {showGuestbook && (
+        <div className="guestbook-overlay">
+          <div className="guestbook-modal">
+            <h2>방명록</h2>
+            <p>따뜻한 위로와 추모의 마음을 남겨주세요.</p>
+            <textarea placeholder="내용을 입력하세요..." rows="5"></textarea>
+            <button className="submit-btn" onClick={() => setShowGuestbook(false)}>등록하기</button>
+            <button className="modal-close-btn" onClick={() => setShowGuestbook(false)}><X size={28} /></button>
+          </div>
+        </div>
+      )}
+
+      {/* 1. 메인화면 */}
       {activeMenu === 'main' && (
         <div className="main-viewport">
           <img src="/images/main.jpg" className="full-bg-mobile" alt="main mobile" />
@@ -94,9 +108,10 @@ export default function MemorialApp() {
             </div>
             
             <div className="bottom-menu">
-              <button onClick={handleFlower}><Flower2 size={45} color="white" /><span>헌화</span></button>
-              <button onClick={() => setActiveMenu('video')}><Landmark size={45} color="white" /><span>추모관</span></button>
-              <button><NotebookPen size={45} color="white" /><span>방명록</span></button>
+              {/* 크기 및 간격 0.85배 축소 반영 */}
+              <button onClick={handleFlower}><Flower2 size={38} color="white" /><span>헌화</span></button>
+              <button onClick={() => setActiveMenu('video')}><Landmark size={38} color="white" /><span>추모관</span></button>
+              <button onClick={() => setShowGuestbook(true)}><NotebookPen size={38} color="white" /><span>방명록</span></button>
             </div>
           </div>
           {isFlowering && <div className="flower-anim"><img src="/images/guk.png" alt="flower" /></div>}
@@ -111,39 +126,35 @@ export default function MemorialApp() {
         </div>
       )}
 
-      {/* 3. 갤러리 (건물선택, 봉안당1 영상, 유골함, 개인추모실) */}
+      {/* 3. 갤러리 */}
       {activeMenu === 'gallery' && (
         <div className="gallery-full-viewport">
           
           {currentScene === 'bong1intro' ? (
             <div className="video-full-viewport">
-              {/* 봉안당1 영상: 끝나면 yu(유골함)으로 */}
               <video src="/videos/bong1intro.mp4" autoPlay playsInline onEnded={() => setCurrentScene('yu')} className="full-video-element" />
               <button className="exit-button" onClick={() => setCurrentScene('yu')}><X size={32} color="white" /></button>
             </div>
           ) : (
             <div className="flat-scene-wrapper">
               
-              {/* 배경 이미지 또는 파노라마 */}
               {SCENE_CONFIG[currentScene]?.isPanorama ? (
                 <div ref={viewerRef} className="viewer-canvas" />
               ) : (
                 <img src={SCENE_CONFIG[currentScene].img} className="flat-scene-img" alt="scene" />
               )}
 
-              {/* 건물 선택 핫스팟 (정확히 중심 정렬 적용) */}
+              {/* 건물 선택 핫스팟 (건물 중앙 좌표로 수정) */}
               {currentScene === 'select' && (
                 <>
-                  <button className="hotspot-btn" style={{left: '30%', top: '55%'}} onClick={() => setCurrentScene('bong1intro')}>봉안당 1</button>
-                  <button className="hotspot-btn" style={{left: '52%', top: '80%'}}>봉안당 2</button>
-                  <button className="hotspot-btn" style={{left: '73%', top: '55%'}}>봉안당 3</button>
+                  <button className="hotspot-btn" style={{left: '27%', top: '50%'}} onClick={() => setCurrentScene('bong1intro')}>봉안당 1</button>
+                  <button className="hotspot-btn" style={{left: '55%', top: '76%'}}>봉안당 2</button>
+                  <button className="hotspot-btn" style={{left: '82%', top: '50%'}}>봉안당 3</button>
                 </>
               )}
 
-              {/* 유골함 클릭 영역 (예전 그대로) */}
               {currentScene === 'yu' && <div className="min-seong-clickbox" onClick={() => setCurrentScene('per')}></div>}
 
-              {/* 공통 X 버튼 및 뱃지 (예전 형식 그대로 복구) */}
               <button className="exit-button" onClick={handleExit}><X size={32} color="white" /></button>
               {SCENE_CONFIG[currentScene]?.title && <div className="scene-title-badge">{SCENE_CONFIG[currentScene].title}</div>}
               
@@ -152,19 +163,16 @@ export default function MemorialApp() {
         </div>
       )}
 
-      {/* 헌화 토스트 메시지 복구 */}
       {showToast && (
         <div className="toast-center">
           {toastMessage.map((line, i) => <div key={i}>{line}</div>)}
         </div>
       )}
 
-      {/* CSS 스타일링 완벽 복구 */}
       <style jsx global>{`
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: 'Noto Serif KR', serif; }
         .app-container { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; }
         
-        /* 메인 화면 이미지 */
         .main-viewport { position: relative; width: 100%; height: 100%; overflow: hidden; }
         .full-bg-mobile { display: block; width: 100%; height: 100%; object-fit: cover; }
         .full-bg-desktop { display: none; width: 100%; height: 100%; object-fit: cover; }
@@ -173,7 +181,6 @@ export default function MemorialApp() {
           .full-bg-desktop { display: block; }
         }
 
-        /* 메인 오버레이 (정렬 및 글씨색 수정) */
         .main-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 10vh 5vw; pointer-events: none; }
         .main-overlay > * { pointer-events: auto; }
         
@@ -181,16 +188,15 @@ export default function MemorialApp() {
         .main-title { font-size: 5rem; color: #000; font-weight: bold; margin: 0; text-shadow: 0 0 10px rgba(255,255,255,0.8); }
         .main-subtitle { font-size: 1.5rem; color: #000; font-weight: bold; margin-top: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.8); }
         
-        .bottom-menu { display: flex; justify-content: flex-end; gap: 60px; width: 100%; padding-right: 2vw; }
-        .bottom-menu button { background: none; border: none; color: white; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
-        .bottom-menu button span { font-size: 1.5rem; font-weight: bold; }
+        /* 메뉴 크기 및 간격 0.85배 조정 */
+        .bottom-menu { display: flex; justify-content: flex-end; gap: 50px; width: 100%; padding-right: 2vw; }
+        .bottom-menu button { background: none; border: none; color: white; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
+        .bottom-menu button span { font-size: 1.25rem; font-weight: bold; }
 
-        /* 헌화 애니메이션 복구 */
         .flower-anim { position: absolute; left: 50%; bottom: 25%; transform: translateX(-50%); z-index: 20; animation: flower-up 2.6s forwards; pointer-events: none; }
         .flower-anim img { width: 150px; }
         @keyframes flower-up { 0% { bottom: 25%; opacity: 0; } 20% { opacity: 1; } 100% { bottom: 60%; opacity: 0; } }
 
-        /* 비디오 및 갤러리 */
         .video-full-viewport { position: fixed; inset: 0; z-index: 200; background: #000; }
         .full-video-element { width: 100%; height: 100%; object-fit: cover; }
         .gallery-full-viewport { position: fixed; inset: 0; z-index: 100; background: #000; }
@@ -199,19 +205,23 @@ export default function MemorialApp() {
         .flat-scene-img { width: 100%; height: 100%; object-fit: contain; }
         .viewer-canvas { position: absolute; inset: 0; width: 100%; height: 100%; background: #000; }
 
-        /* UI 컴포넌트 */
         .hotspot-btn { position: absolute; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); border: 2px solid #ef4444; color: white; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.2rem; z-index: 120; }
+        .exit-button { position: absolute; top: 30px; right: 30px; z-index: 250; background: rgba(0,0,0,0.5); border: 1px solid #fff; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
-        /* 찌그러짐 없는 예전 X 버튼 복구 */
-        .exit-button { position: absolute; top: 30px; right: 30px; z-index: 250; background: rgba(0,0,0,0.5); border: 1px solid #fff; border-radius: 50%; width: 50px; height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; box-sizing: border-box; }
-        
-        /* 유골함, 개인추모실 예전 뱃지 스타일 복구 */
         .scene-title-badge { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); border: 2px solid #ef4444; color: white; padding: 10px 30px; border-radius: 8px; font-weight: bold; font-size: 1.2rem; z-index: 130; }
-        
         .min-seong-clickbox { position: absolute; top: 15%; left: 40%; width: 20%; height: 30%; cursor: pointer; z-index: 115; }
         
-        /* 토스트 메시지 복구 */
         .toast-center { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); color: white; padding: 22px 45px; border-radius: 20px; z-index: 500; text-align: center; font-size: 1.2rem; line-height: 1.5; }
+
+        /* 방명록 모달 스타일 */
+        .guestbook-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 600; display: flex; justify-content: center; align-items: center; }
+        .guestbook-modal { background: white; color: black; padding: 40px; border-radius: 12px; width: 90%; max-width: 500px; position: relative; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .guestbook-modal h2 { margin: 0; font-size: 1.8rem; color: #333; }
+        .guestbook-modal p { margin: 0; color: #666; font-size: 1rem; }
+        .guestbook-modal textarea { width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; resize: none; box-sizing: border-box; font-family: inherit; }
+        .submit-btn { background: #3b82f6; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .submit-btn:hover { background: #2563eb; }
+        .modal-close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; cursor: pointer; color: #666; }
       `}</style>
     </div>
   );
