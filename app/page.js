@@ -87,7 +87,7 @@ export default function MemorialApp() {
             </div>
             <div className="bottom-menu">
               <button onClick={handleFlower}><Flower2 size={38} color="white" /><span>헌화</span></button>
-              <button onClick={() => setActiveMenu('video')}><Landmark size={38} color="white" /><span>추모관</span></button>
+              <button onClick={() => { setActiveMenu('gallery'); setCurrentScene('select'); }}><Landmark size={38} color="white" /><span>추모관</span></button>
               <button onClick={() => setShowGuestbook(true)}><NotebookPen size={38} color="white" /><span>방명록</span></button>
             </div>
           </div>
@@ -121,7 +121,7 @@ export default function MemorialApp() {
               )}
               {currentScene === 'yu' && <div className="min-seong-clickbox" onClick={() => setCurrentScene('per')}></div>}
               <button className="exit-button" onClick={handleExit}><X size={32} color="white" /></button>
-              <div className="hotspot-btn" style={{left: '50%', top: '30px', transform: 'translateX(-50%)'}}>{SCENE_CONFIG[currentScene].title}</div>
+              {/* 수정: 건물선택 타이틀 박스 삭제 */}
             </div>
           )}
         </div>
